@@ -5,9 +5,14 @@ import (
 	"math"
 )
 
-func Add(a, b float64) float64 {
-	return a + b
+func Add(inputs  ...float64) float64 {
+	var a float64
+	for _, input := range inputs {		
+		a += input
+	}
+	return a
 }
+
 
 func Subtract(a, b float64) float64 {
 	return a - b
