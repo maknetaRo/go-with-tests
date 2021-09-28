@@ -18,8 +18,13 @@ func Subtract(a, b float64) float64 {
 	return a - b
 }
 
-func Multiply(a, b float64) float64 {
-	return a * b
+func Multiply(inputs ...float64) float64 {
+	var result float64 = 1
+	for _, input := range inputs {
+		result *= input
+	}
+	return result
+
 }
 
 func Divide(a, b float64) (float64, error) {
