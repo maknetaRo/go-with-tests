@@ -14,13 +14,24 @@ func Add(inputs  ...float64) float64 {
 }
 
 
-func Subtract(a, b float64) float64 {
-	return a - b
+func Subtract(inputs... float64) float64 {
+	if len(inputs) == 0 {
+		return 0
+	}
+	result := inputs[0]
+	for _, input := range inputs[1:] {
+		result -= input
+	}
+	return result
+	
 }
 
 func Multiply(inputs ...float64) float64 {
-	var result float64 = 1
-	for _, input := range inputs {
+	if len(inputs) == 0 {
+		return 0
+	}
+	var result float64 = inputs[0]
+	for _, input := range inputs[1:] {
 		result *= input
 	}
 	return result
@@ -32,6 +43,20 @@ func Divide(a, b float64) (float64, error) {
 		return 0, errors.New("division by zero not allowed")
 	}
 		return a / b, nil	
+}
+
+func DivideMany(inputs... float64) (float64, error) {
+	if len(inputs) == 0 {
+		return 0, nil 
+	}
+	result := inputs[0]
+	for _, input := range inputs[1:] {
+		if input == 0 {
+			return 0, errors.New("division by zero not allowed")
+		}
+		result = result / input
+	}
+	return result, nil
 }
 
 func Sqrt(a float64) (float64, error) {

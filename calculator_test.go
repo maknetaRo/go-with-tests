@@ -9,19 +9,18 @@ import (
 func TestAdd(t *testing.T) {
 	t.Parallel()
 	type testCase struct {
-		a, b float64
+		inputs []float64
 		want float64
 	}
 	testCases := []testCase{
-		{a: 2, b: 2, want: 4},
-		{a: 1, b: 1, want: 2},
-		{a: 5, b: 0, want: 5},
-		{a: -1, b: 1, want: 0},
+		{inputs: []float64{}, want: 0},
+		{inputs: []float64{2, 2}, want: 4},
+		{inputs: []float64{2, 2, 2}, want : 6},
 	}
 	for _, tc := range testCases {
-		got := calculator.Add(tc.a, tc.b)
+		got := calculator.Add(tc.inputs...)
 		if tc.want != got {
-			t.Errorf("Add(%f, %f): want %f, got %f", tc.a, tc.b, tc.want, got)
+			t.Errorf("Add(%v): want %f, got %f", tc.inputs, tc.want, got)
 		}
 	}
 }
@@ -30,18 +29,20 @@ func TestAdd(t *testing.T) {
 func TestSubtract(t *testing.T) {
 	t.Parallel()
 	type testCase struct {
-		a, b float64
+		inputs []float64
 		want float64
 	}
 	testCases := []testCase{
-		{a: 2, b: 2, want: 0},
-		{a: 2.5, b: 2, want: 0.5},
-		{a: 5, b: 10, want: -5},
+		{inputs: []float64{}, want: 0},
+		{inputs: []float64{2}, want: 2},
+		{inputs: []float64{2, 2, 2}, want: -2},
+		{inputs: []float64{10, 5, 3, 2}, want: 0},
+	
 	}
 	for _, tc := range testCases {
-		got := calculator.Subtract(tc.a, tc.b)
+		got := calculator.Subtract(tc.inputs...)
 		if tc.want != got {
-			t.Errorf("Subtract(%f, %f): want %f, got %f", tc.a, tc.b, tc.want, got)
+			t.Errorf("Subtract(%v): want %f, got %f", tc.inputs, tc.want, got)
 		}
 	}
 }
@@ -49,48 +50,56 @@ func TestSubtract(t *testing.T) {
 func TestMultiply(t *testing.T) {
 	t.Parallel()
 	type testCase struct {
-		a, b float64
+		inputs []float64
 		want float64
 	}
 	testCases := []testCase{
-		{a: -1, b: 4, want: -4},
-		{a: 0, b: 4, want: 0},
-		{a: 0.5, b: 2, want: 1},
+		{inputs: []float64{},  want: 0},
+		{inputs: []float64{2}, want: 2},
+		{inputs: []float64{0.5, 2}, want: 1},
 	}
 	for _, tc := range testCases {
-		got := calculator.Multiply(tc.a, tc.b)
+		got := calculator.Multiply(tc.inputs...)
 		if tc.want != got {
-			t.Errorf("Multiply(%f, %f): want %f, got %f", tc.a, tc.b, tc.want, got)
+			t.Errorf("Multiply(%v): want %f, got %f", tc.inputs, tc.want, got)
 		}
 	}
 }
 
-func TestDivide(t *testing.T) {
+func TestDivideMany(t *testing.T) {
 	t.Parallel()
 	type testCase struct {
-		a, b float64
+		inputs []float64
 		want float64
 	}
 	testCases := []testCase {
-		{a: 2, b: 2, want: 1},
-		{a: 2, b: 4, want: 0.5},
-		{a: -3, b: -1, want: 3},
-		{a: 10, b: 2, want: 5},
-		{a: 6, b: -2, want: -3},
-		{a: 1, b: 3, want: 0.333333,},
-	}
-	for _, tc := range testCases {
-		got, err := calculator.Divide(tc.a, tc.b)	
-		if err != nil {
-			t.Fatalf("Divide(%f, %f): want no error for valid input, got %v", tc.a, tc.b, err)
-		}
+		{inputs: []float64{}, want: 0},
+		{inputs: []float64{2}, want: 2},
+		{inputs: []float64{1, 1}, want: 1},
+		{inputs: []float64{30, 5, 3}, want: 2},
+		{inputs: []float64{-2, 1}, want: -2},
+		{inputs: []float64{1, 3}, want: 0.3333},
 
+	}
+	for _, tc := range testCases{
+		got, err := calculator.DivideMany(tc.inputs...)
+		if err != nil {
+			t.Fatalf("Divide(%v): want no error for valid input, got %v", tc.inputs, err)
+		}
 		if !closeEnough(tc.want, got, 0.001) {
-			t.Errorf("Divide(%f, %f): want %f, got %f",tc.a, tc.b, tc.want, got)
+			t.Errorf("Divide(%v): want %f, got %f", tc.inputs, tc.want, got)
 		}
 		// if tc.want != got {
-		// 	t.Errorf("Divide(%f, %f): want %f, got %f",tc.a, tc.b, tc.want, got)
+		// 	t.Errorf("Divide(%v): want %f, got %f",tc.inputs, tc.want, got)
 		// }
+	}
+	
+	}
+func TestDivideManyInvalid(t * testing.T) {
+	t.Parallel() 
+	_, err := calculator.DivideMany(10, 5, 0, 7) 
+	if err == nil {
+		t.Error("Divide(10, 5, 0, 7): want error for zero divisor, got nil")
 	}
 }
 
